@@ -1,6 +1,7 @@
 const itemForm = document.getElementById('item-form');
 const itemInput = document.getElementById('item-input');
 const itemList = document.getElementById('item-list');
+const clearAllButton = document.getElementById('clear');
 
 function addItem(e) {
     e.preventDefault();
@@ -39,8 +40,24 @@ function createIcon(classes) {
     return icon;
 }
 
+function removeAllItems() {
+    const allItems = itemList.querySelectorAll('li');
+    for (item of allItems) {
+        item.remove();
+    }
+}
+
+function removeItem(e) {
+    if (e.target.className === 'fa-solid fa-xmark') {
+        e.target.parentElement.parentElement.remove();
+    }
+}
+
+
 // Event Listeners
 itemForm.addEventListener('submit', addItem);
+clearAllButton.addEventListener('click', removeAllItems);
+itemList.addEventListener('click', removeItem);
 
 
 
