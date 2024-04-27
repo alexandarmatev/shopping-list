@@ -15,29 +15,42 @@ function displayItems() {
 function onAddItemSubmit(e) {
     e.preventDefault();
 
-    const newItem = itemInput.value; 
+    let newItem = itemInput.value;
 
     // Validate Input
     if (newItem === '') {
         alert('Please add an item');
-        return;
-    }
+        return; 
+    } 
 
     // Check for edit mode
     if (isEditMode) {
-        const itemToEdit = itemList.querySelector('.edit-mode');
+        const editItem = itemList.querySelector('.edit-mode')
 
-        removeItemFromStorage(itemToEdit.textContent);
-        itemToEdit.classList.remove('edit-mode');
-        itemToEdit.remove();
+        if (checkIfItemExists(editItem.textContent)) {
+            alert('That item already exists.');
+        } else {
+            editItem.remove();
+            removeItemFromStorage(editItem.textContent);
+
+            // Create item DOM element
+            addItemToDOM(editItem);
+
+            // Add item to local storage
+            addItemToStorage(editItem);
+        }
+
+        editItem.classList.remove('edit-mode');
         isEditMode = false;
+    } else if (checkIfItemExists(newItem)) {
+        alert('That item already exists.');
+    } else {
+        // Create item DOM element
+        addItemToDOM(newItem);
+
+        // Add item to local storage
+        addItemToStorage(newItem);
     }
-
-    // Create item DOM element
-    addItemToDOM(newItem);
-
-    // Add item to local storage
-    addItemToStorage(newItem);
 
     checkUI();
 
@@ -123,6 +136,11 @@ function setItemToEdit(item) {
     itemInput.value = item.textContent;
 }
 
+function checkIfItemExists(item) {
+    const allItems = getItemsFromStorage();
+    return allItems.includes(item);
+}
+
 function removeItem(item) {
     if (confirm('Are you sure?')) {
         // Remove item from DOM
@@ -151,7 +169,7 @@ function filterItems(e) {
     
     items.forEach(item => {
         const itemName = item.firstChild.textContent.toLowerCase();
-        
+   
         if (itemName.indexOf(filter) != -1) {
             item.style.display = 'flex';
         } else {
@@ -163,7 +181,7 @@ function filterItems(e) {
 
 function checkUI() {
     itemInput.value = '';
-    
+
     const items = itemList.querySelectorAll('li');
 
     if (items.length === 0) {
@@ -180,7 +198,7 @@ function checkUI() {
     isEditMode = false;
 }
 
-// Initalize app
+// Initalize app`
 function init() {
     // Event Listeners
     itemForm.addEventListener('submit', onAddItemSubmit);
@@ -188,7 +206,6 @@ function init() {
     itemList.addEventListener('click', onClickItem);
     itemFilter.addEventListener('input', filterItems);
     document.addEventListener('DOMContentLoaded', displayItems);
-
     checkUI();
 }
 
